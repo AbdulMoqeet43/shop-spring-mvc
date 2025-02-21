@@ -21,7 +21,7 @@ public interface InventoryRepo extends JpaRepository<Item, Integer> {
     @Query("UPDATE Item i SET i.quantity = i.quantity - ?2 WHERE i.id = ?1")
     void decreaseItem(int itemId, int numberOfDecrease);
 
-    @Modifying
-    @Query("INSERT INTO Category (name) VALUES (?1)")
-    void addCategory(String categoryName);
+//    @Modifying
+//    @Query("INSERT INTO Category (name) VALUES (?1)")
+//    void addCategory(String categoryName);
 }

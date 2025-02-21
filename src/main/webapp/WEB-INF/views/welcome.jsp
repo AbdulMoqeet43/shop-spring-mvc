@@ -54,26 +54,23 @@
     <h1>Welcome to Online Shopping Center</h1>
 
     <% if (request.getAttribute("message") != null) { %>
-    <p><%= request.getAttribute("message") %></p>
+    <p style="color: green;"><%= request.getAttribute("message") %></p>
     <% } %>
 
     <% if (request.getParameter("error") != null) { %>
     <p style="color: red;"><%= request.getParameter("error") %></p>
     <% } %>
 
-
-    <form action="loginServlet" method="post">
+    <form action="<%= request.getContextPath() %>/login" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required><br><br>
 
-
-
         <div class="actions">
             <button type="submit" name="action" value="signin">Sign In</button>
-            <button type="submit" name="action" value="signup">Sign Up</button>
+            <button type="submit" formaction="<%= request.getContextPath() %>/register" formmethod="get">Sign Up</button>
         </div>
     </form>
 </div>

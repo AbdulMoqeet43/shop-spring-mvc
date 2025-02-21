@@ -99,6 +99,6 @@ public class ManageInventoryService {
         if (categoryName == null || categoryName.trim().isEmpty()) {
             throw new IllegalArgumentException("Category name cannot be null or empty.");
         }
-        inventoryRepository.addCategory(categoryName);
+//        inventoryRepository.addCategory(categoryName);
     }
 }

@@ -15,7 +15,6 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())  // Disable CSRF
-                .headers(headers -> headers.frameOptions().disable())  // For H2 Console (if needed)
                 .formLogin(login -> login.disable())  // Disable Login Page
                 .logout(logout -> logout.disable())  // Disable Logout
                 .httpBasic(basic -> basic.disable());  // Disable Basic Auth

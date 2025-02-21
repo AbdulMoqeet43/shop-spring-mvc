@@ -1,9 +1,5 @@
 package com.code.model;
 
-import BO.ItemManager;
-
-import java.util.Collection;
-
 public class ShoppingCartInfo {
     private int id;
     private int userid;
