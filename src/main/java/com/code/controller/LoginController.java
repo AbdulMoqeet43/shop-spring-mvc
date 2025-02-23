@@ -1,11 +1,12 @@
 package com.code.controller;
 
 import com.code.model.User;
+import com.code.model.UserRoles;
 import com.code.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -16,47 +17,53 @@ public class LoginController {
     private UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestParam("username") String username,
-                                   @RequestParam("password") String password,
-                                   @RequestParam("action") String action,
-                                   HttpSession session) {
+    public String login(@RequestParam String username,
+                        @RequestParam String password,
+                        @RequestParam String action,
+                        HttpSession session,
+                        Model model) {
 
         if ("signin".equalsIgnoreCase(action)) {
             User user = userService.loginUser(username, password);
 
             if (user == null) {
-                return ResponseEntity.badRequest().body("Invalid username or password");
+                model.addAttribute("error", "Invalid username or password");
+                return "login"; // Redirect back to login page
             }
 
             session.setAttribute("user", user);
             session.setAttribute("username", user.getUsername());
             session.setAttribute("role", user.getRole());
 
-            String redirectUrl;
+            // Redirect based on role
             switch (user.getRole()) {
                 case CUSTOMER:
-                    redirectUrl = "/home";
-                    break;
+                    return "redirect:/home";
                 case ADMIN:
-                    redirectUrl = "/admin";
-                    break;
+                    return "redirect:/admin";
                 case WAREHOUSE_STAFF:
-                    redirectUrl = "/warehouse";
-                    break;
+                    return "redirect:/warehouse";
                 default:
-                    redirectUrl = "/unauthorized";
-                    break;
+                    return "redirect:/unauthorized";
             }
-
-            return ResponseEntity.ok().body("Redirecting to: " + redirectUrl);
         }
 
-        else if ("signup".equalsIgnoreCase(action)) {
-            return ResponseEntity.ok().body("Redirecting to: /register");
+        if ("signup".equalsIgnoreCase(action)) {
+            return "redirect:/register";
         }
 
-        else {
-            return ResponseEntity.badRequest().body("Invalid action");
-        }
+        model.addAttribute("error", "Invalid action");
+        return "login";
     }
+
+    @PostMapping("/signup")
+    public String signup(@ModelAttribute("user") User user, Model model) {
+        if (user.getRole() == null) {
+            user.setRole(UserRoles.CUSTOMER); // Default role
+        }
+        userService.save(user);
+        model.addAttribute("message", "Signup successful!");
+        return "welcome";
+    }
+
 }

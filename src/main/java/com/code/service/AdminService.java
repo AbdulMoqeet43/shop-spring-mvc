@@ -4,6 +4,8 @@ import com.code.model.User;
 import com.code.model.UserRoles;
 import com.code.model.dto.UserInfoDTO;
 import com.code.repository.AdminRepo;
+import com.code.repository.UsersRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +17,10 @@ import java.util.stream.Collectors;
 public class AdminService {
 
     private final AdminRepo adminRepository;
+    @Autowired
+    private UsersRepo usersRepo;
 
+    @Autowired
     public AdminService(AdminRepo adminRepository) {
         this.adminRepository = adminRepository;
     }
@@ -27,31 +32,32 @@ public class AdminService {
     }
 
     @Transactional
-    public void updateUserName(Integer userId, String newUsername) {
+    public void updateUsername(Integer userId, String newUsername) {
         if (userId == null || newUsername == null || newUsername.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid userId or username");
         }
 
-        User user = adminRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = usersRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         user.setUsername(newUsername);
-        adminRepository.save(user);
+        usersRepo.save(user);
     }
 
     @Transactional
-    public void updateUserRole(Integer userId, String newRole) {
-        if (userId == null || newRole == null || newRole.trim().isEmpty()) {
+    public void updateUserRole(Integer userId, String role) {
+        if (userId == null || role == null || role.trim().isEmpty()) {
             throw new IllegalArgumentException("Invalid userId or role");
         }
 
-        User user = adminRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = usersRepo.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         try {
-            user.setRole(UserRoles.valueOf(newRole.toUpperCase())); // Convert role to ENUM
-            adminRepository.save(user);
+            UserRoles newRole = UserRoles.valueOf(role.toUpperCase());
+            user.setRole(newRole);
+            usersRepo.save(user);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid role: " + newRole);
+            throw new IllegalArgumentException("Invalid role: " + role);
         }
     }
 
@@ -61,7 +67,11 @@ public class AdminService {
             throw new IllegalArgumentException("Invalid userId");
         }
 
-        adminRepository.deleteById(userId);
+        if (!usersRepo.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+
+        usersRepo.deleteById(userId);
     }
 
     @Transactional
@@ -70,12 +80,24 @@ public class AdminService {
             throw new IllegalArgumentException("Invalid username or password");
         }
 
+        if (usersRepo.existsByUsername(username)) {
+            throw new RuntimeException("Username already exists");
+        }
+
         User newAdmin = new User();
         newAdmin.setUsername(username);
-        newAdmin.setPassword(password);
-//        newAdmin.setPassword(passwordEncoder.encode(password)); // Secure password encoding
+        newAdmin.setPassword(password); // Secure password encoding
         newAdmin.setRole(UserRoles.ADMIN);
 
-        adminRepository.save(newAdmin);
+        usersRepo.save(newAdmin);
+    }
+
+    @Transactional
+    public void addNewAdmin() {
+        User admin = new User();
+        admin.setUsername("newAdmin");
+        admin.setPassword("111"); // Hashing for security
+        admin.setRole(UserRoles.ADMIN);
+        usersRepo.save(admin);
     }
 }

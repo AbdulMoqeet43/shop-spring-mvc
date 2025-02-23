@@ -5,7 +5,6 @@ import com.code.service.ItemService;
 import com.code.service.ShoppingCartService;
 import com.code.service.UserService;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -18,26 +17,27 @@ import java.util.List;
 @RequestMapping
 public class HomeController {
 
-    @Autowired
-    private ItemService itemService;
-    @Autowired
-    private ShoppingCartService shoppingCartService;
-    @Autowired
-    private UserService userService;
+    private final ItemService itemService;
+    private final ShoppingCartService shoppingCartService;
+    private final UserService userService;
 
-    // Default landing page - loads welcome.jsp
-    @GetMapping("/")
-    public String welcome() {
-        return "welcome";  // JSP will be resolved from /WEB-INF/views/welcome.jsp
+    public HomeController(ItemService itemService, ShoppingCartService shoppingCartService, UserService userService) {
+        this.itemService = itemService;
+        this.shoppingCartService = shoppingCartService;
+        this.userService = userService;
     }
 
-    // Home page that loads items if the user is logged in
+    @GetMapping("/")
+    public String welcome() {
+        return "welcome";  // Redirects to welcome.jsp
+    }
+
     @GetMapping("/home")
     public String homePage(HttpSession session, Model model) {
         String user = (String) session.getAttribute("username");
 
         if (user == null) {
-            return "redirect:/?error=Please log in first";  // Redirects to welcome.jsp
+            return "redirect:/?error=" + encodeURL("Please log in first");
         }
 
         List<ItemInfo> availableItemsInfo = itemService.getAllItems();
@@ -47,17 +47,16 @@ public class HomeController {
         return "items"; // Forward to items.jsp
     }
 
-    // Handling actions like view cart, empty cart, recommendations, logout
     @PostMapping("/home")
-    public String handleActions(@RequestParam("action") String action, HttpSession session) throws UnsupportedEncodingException {
-        if (session == null || session.getAttribute("username") == null) {
-            return "redirect:/?error=Please login first";
+    public String handleActions(@RequestParam("action") String action, HttpSession session) {
+        if (session.getAttribute("username") == null) {
+            return "redirect:/?error=" + encodeURL("Please login first");
         }
 
         String user = (String) session.getAttribute("username");
         int userId = userService.getUserId(user);
 
-        if (action == null || action.isEmpty()) {
+        if (action == null || action.trim().isEmpty()) {
             return "redirect:/unauthorized";
         }
 
@@ -67,7 +66,7 @@ public class HomeController {
 
             case "Empty Cart":
                 shoppingCartService.deleteAllItemsFromCart(userId);
-                return "redirect:/home?message=" + URLEncoder.encode("Cart emptied successfully", "UTF-8");
+                return "redirect:/home?message=" + encodeURL("Cart emptied successfully");
 
             case "Recommended for You":
                 return "redirect:/recommendations";
@@ -78,6 +77,14 @@ public class HomeController {
 
             default:
                 return "redirect:/home";
+        }
+    }
+
+    private String encodeURL(String message) {
+        try {
+            return URLEncoder.encode(message, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            return message;
         }
     }
 }

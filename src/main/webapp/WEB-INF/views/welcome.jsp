@@ -61,7 +61,7 @@
     <p style="color: red;"><%= request.getParameter("error") %></p>
     <% } %>
 
-    <form action="<%= request.getContextPath() %>/login" method="post">
+    <form action="<%= request.getContextPath() %>/auth/login" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required><br><br>
 
@@ -72,6 +72,10 @@
             <button type="submit" name="action" value="signin">Sign In</button>
             <button type="submit" formaction="<%= request.getContextPath() %>/register" formmethod="get">Sign Up</button>
         </div>
+
+        <% if (request.getAttribute("error") != null) { %>
+        <p style="color: red;"><%= request.getAttribute("error") %></p>
+        <% } %>
     </form>
 </div>
 

@@ -102,4 +102,8 @@ public class UserService {
                 .map(User::getRole)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
     }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
 }
