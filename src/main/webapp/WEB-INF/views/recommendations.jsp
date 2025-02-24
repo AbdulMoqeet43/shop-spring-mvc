@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.List, UI.Info.RecommendationInfo" %>
+<%@ page import="java.util.List, com.code.model.RecommendationInfo" %>
 
 <!DOCTYPE html>
 <html lang="en">

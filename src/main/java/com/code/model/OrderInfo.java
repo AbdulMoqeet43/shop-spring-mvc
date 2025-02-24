@@ -1,7 +1,10 @@
 package com.code.model;
 
+import lombok.Data;
+
 import java.sql.Timestamp;
 
+@Data
 public class OrderInfo {
     private int id;
     private int userId;

@@ -1,8 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="BO.ShoppingCart" %>
-<%@ page import="BO.ShoppingCartManager" %>
-<%@ page import="BO.UserManager" %>
-<%@ page import="UI.Info.ShoppingCartInfo" %>
+<%@ page import="com.code.model.ShoppingCart" %>
+<%@ page import="com.code.model.ShoppingCartInfo" %>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.sql.SQLException" %>
 

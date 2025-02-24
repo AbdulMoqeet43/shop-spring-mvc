@@ -1,6 +1,6 @@
 <%@ page import="java.util.List" %>
-<%@ page import="UI.Info.OrderInfo" %>
-<%@ page import="BO.User" %>
+<%@ page import="com.code.model.OrderInfo" %>
+<%@ page import="com.code.model.User" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
