@@ -68,7 +68,7 @@
 <div class="container">
 
     <div class="logout-button">
-        <form action="${pageContext.request.contextPath}/logout" method="post">
+        <form action="${pageContext.request.contextPath}/auth/logout" method="post">
             <input type="submit" value="Logout">
         </form>
     </div>

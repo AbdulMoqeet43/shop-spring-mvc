@@ -1,9 +1,6 @@
 package com.code.service;
 
-import com.code.model.Item;
-import com.code.model.ShoppingCart;
-import com.code.model.ShoppingCartInfo;
-import com.code.model.User;
+import com.code.model.*;
 import com.code.repository.ItemsRepo;
 import com.code.repository.ShoppingCartRepo;
 import com.code.repository.UsersRepo;
@@ -99,5 +96,17 @@ public class ShoppingCartService {
 
     private void validateUserId(int userId) {
         if (userId <= 0) throw new IllegalArgumentException("User ID must be greater than zero.");
+    }
+
+    public List<ShoppingCart> getCartItems(int userId) {
+        List<ShoppingCart> itemList = shoppingCartRepo.findByUserId(userId);
+        return itemList;
+    }
+
+    public void addToCart(int userId, int itemId, int quantity) {
+        
+    }
+
+    public void emptyCart(int userId) {
     }
 }

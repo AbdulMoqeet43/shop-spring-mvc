@@ -3,6 +3,8 @@ package com.code.controller;
 import com.code.model.User;
 import com.code.model.UserRoles;
 import com.code.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,7 +40,7 @@ public class LoginController {
             // Redirect based on role
             switch (user.getRole()) {
                 case CUSTOMER:
-                    return "redirect:/home";
+                    return "redirect:/items";
                 case ADMIN:
                     return "redirect:/admin";
                 case WAREHOUSE_STAFF:
@@ -65,5 +67,15 @@ public class LoginController {
         model.addAttribute("message", "Signup successful!");
         return "welcome";
     }
+
+    @PostMapping("/logout")
+    public String logout(HttpServletRequest request, HttpServletResponse response) {
+        // Invalidate session
+        request.getSession().invalidate();
+
+        // Redirect to welcome page
+        return "redirect:/";
+    }
+
 
 }

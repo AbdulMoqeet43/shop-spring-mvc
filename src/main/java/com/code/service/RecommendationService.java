@@ -71,4 +71,8 @@ public class RecommendationService {
             throw new IllegalArgumentException("Item ID must be greater than zero.");
         }
     }
+
+    public List<Recommendation> getRecommendedItems(int userId) {
+        return recommendationRepo.findMostBuyingItems();
+    }
 }

@@ -43,7 +43,7 @@
 </head>
 <body>
 <div class="form-container">
-    <h1>Add New Admin</h1>
+    <h1>Add New Admin - Update User/Roles</h1>
 
     <form action="AdminServlet" method="post">
         <label for="username">Username:</label>
