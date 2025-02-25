@@ -40,14 +40,15 @@ public class HomeController {
             return "redirect:/?error=" + encodeURL("Please log in first");
         }
 
-        List<ItemInfo> availableItemsInfo = itemService.getAllItems();
+        List<ItemInfo> availableItems = itemService.getAllItems();
         model.addAttribute("username", user);
-        model.addAttribute("availableItems", availableItemsInfo);
+        model.addAttribute("availableItems", availableItems);
 
-        return "items"; // Forward to items.jsp
+        return "items"; // Loads items.jsp
     }
 
-    @PostMapping("/home")
+
+    @PostMapping
     public String handleActions(@RequestParam("action") String action, HttpSession session) {
         if (session.getAttribute("username") == null) {
             return "redirect:/?error=" + encodeURL("Please login first");
@@ -56,25 +57,17 @@ public class HomeController {
         String user = (String) session.getAttribute("username");
         int userId = userService.getUserId(user);
 
-        if (action == null || action.trim().isEmpty()) {
-            return "redirect:/unauthorized";
-        }
-
         switch (action) {
             case "View Cart":
                 return "redirect:/cart";
-
             case "Empty Cart":
                 shoppingCartService.deleteAllItemsFromCart(userId);
                 return "redirect:/home?message=" + encodeURL("Cart emptied successfully");
-
             case "Recommended for You":
                 return "redirect:/recommendations";
-
             case "Logout":
                 session.invalidate();
                 return "redirect:/";
-
             default:
                 return "redirect:/home";
         }

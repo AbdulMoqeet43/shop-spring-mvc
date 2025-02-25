@@ -40,7 +40,7 @@ public class LoginController {
             // Redirect based on role
             switch (user.getRole()) {
                 case CUSTOMER:
-                    return "redirect:/items";
+                    return "redirect:/home";
                 case ADMIN:
                     return "redirect:/admin";
                 case WAREHOUSE_STAFF:

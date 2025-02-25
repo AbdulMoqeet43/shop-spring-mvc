@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/orders")
+@RequestMapping("/orderProcessing")
 public class OrderProcessingController {
 
     @Autowired
@@ -24,36 +24,37 @@ public class OrderProcessingController {
         User user = (User) session.getAttribute("user");
 
         if (user == null || user.getRole() != UserRoles.WAREHOUSE_STAFF) {
-            model.addAttribute("error", "Unauthorized access");
-            return "error";  // Return error view
+            return "redirect:/unauthorized";
         }
 
         try {
             List<OrderInfo> allOrdersInfo = manageOrdersService.fetchAllOrders();
             model.addAttribute("orders", allOrdersInfo);
-            return "orders";  // Return orders view
+            return "orderProcessing"; // JSP view name
         } catch (Exception e) {
-            model.addAttribute("error", "Failed to load orders");
-            return "error";
+            return "redirect:/error?message=Failed to load orders";
         }
     }
 
     @PostMapping
-    public String processOrder(@RequestParam("action") String action, HttpSession session, Model model) {
+    public String processOrder(@RequestParam("action") String action,
+                               @RequestParam(value = "orderID", required = false) Long orderID,
+                               HttpSession session, Model model) {
         User user = (User) session.getAttribute("user");
 
         if (user == null || action == null || action.isEmpty() || user.getRole() != UserRoles.WAREHOUSE_STAFF) {
-            model.addAttribute("error", "Unauthorized access");
-            return "error";
+            return "redirect:/unauthorized";
         }
 
         switch (action) {
-            case "EditOrder":
-                model.addAttribute("message", "Edit order functionality not implemented yet");
-                return "edit-order";  // Return the edit-order view
+            case "Edit":
+                if (orderID != null) {
+                    model.addAttribute("message", "Edit order functionality not implemented yet");
+                    return "editOrder"; // Return the editOrder view
+                }
+                return "redirect:/error?message=Invalid order ID";
             default:
-                model.addAttribute("error", "Invalid action");
-                return "error";
+                return "redirect:/error?message=Invalid action";
         }
     }
 }
